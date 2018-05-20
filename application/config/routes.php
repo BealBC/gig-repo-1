@@ -77,7 +77,9 @@ $route['gig/(:any)'] = 'gig/view/$1';
 $route['venues'] = 'venues/index';
 $route['venues/add'] = 'venues/add';
 $route['venues/success'] = 'venues/success';
+$route['venues/edit'] = 'venues/edit';
 $route['venues/(:any)'] = 'venues/view/$1';
+
 
 //other page routes
 $route['customer'] = 'customer';

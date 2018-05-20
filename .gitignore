@@ -47,3 +47,5 @@ Thumbs.db
 *.o
 *.so
 >>>>>>> b9592866d96cc8adef613696eb7ec3d6af833f55
+application/config/config.php
+application/config/config.php

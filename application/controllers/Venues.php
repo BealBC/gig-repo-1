@@ -8,7 +8,7 @@
  * @package ITC260
  * @subpackage Forms
 
- * @author Lydia King, Anna Atiagina, Jenny Crimp 
+ * @author Lydia King, Anna Atiagina, Jenny Crimp
  * @author Alex, Spencer, Mith, Jeremiah
  * @version 3.0 2016/06/14
  * @link
@@ -42,7 +42,7 @@ class Venues extends CI_Controller {
             $this->load->helper('form');
             $this->config->set_item('nav-active', 'Venues');//sets active class on all Venues children
        }
-    
+
        /**
         * index function loads venues data from Venues/Model and allows you to view in venues/index
         *
@@ -64,7 +64,7 @@ class Venues extends CI_Controller {
      * @return void
      * @todo none
      */
-       public function view($slug = NULL)
+     public function view($slug = NULL)
 	   {
 			$data['venue'] = $this->Venues_model->getVenues($slug);
 
@@ -103,5 +103,37 @@ class Venues extends CI_Controller {
             $this->load->view('venues/success');
         }
     }//end add()
+
+    public function edit($slug = NULL)
+    {
+      $this->load->helper('form');
+      $this->load->library('form_validation');
+      if($this->form_validation->run() == FALSE)//user hasn't submitted an edit
+      {
+        if(is_null($slug))//show venues
+        {
+          $data['venues'] = $this->Venues_model->getVenues();
+          $data['title'] = 'Edit Venues';
+          $this->load->view('venues/edit-list', $data);
+        }
+        else//show edit page
+        {
+          $data['venue'] = $this->Venues_model->getVenues($slug);
+
+          if (empty($data['venue']))
+          {
+              show_404();
+          }
+          $this->load->helper('date');
+          $data['title'] = 'Edit ' + $data['venue']['VenueName'];
+          $this->load->view('venues/edit-view', $data);
+        }
+      }
+      else
+      {
+        //$this->Venues_model->editVenue();
+        $this->load->view('venues/edit-success');
+      }
+    }//end edit()
 
 }//END Venues
