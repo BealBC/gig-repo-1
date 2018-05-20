@@ -37,14 +37,20 @@ class Admin extends CI_Controller {
         public function index(){
             $data['title'] ="Admin dashboard";
             if ($this->session->logged_in == TRUE){
-                $logged = 'Logged';
+                $logged = 'Logged in';
             }else{
-                $logged = 'Logout';
+                $logged = 'Logged out';
             }
             if (isset($this->session->email)){
                 $data['email'] = $this->session->email;   
+                $data['first_name'] = $this->session->first_name;   
+                $data['last_name'] = $this->session->last_name;   
+                $data['picture'] = $this->session->picture;   
             }else{
-                $data['email'] = "Login to see your person.";
+                $data['email'] = "";
+                $data['first_name'] = "";  
+                $data['last_name'] = "";
+                $data['picture'] = "";
             }
             
             $data['logged'] = $logged;
