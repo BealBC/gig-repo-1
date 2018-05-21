@@ -39,19 +39,17 @@ class Admin_model extends CI_Model {
         
         public function getInfor($data)
         {
-           
            if ($data == ""){
             return FALSE;
             }else{
             $query = $this->db->get_where('Profile', array('email' => $data['email']));
-            $row = $query->row();    
+            $row = $query->row();
+
                 if (isset($row))
                 {
-                    //if(pass_decrypt($row->password,KEY_ENCRYPT) == $data['pass'])
-                        if(password_verify($data['pass'], $row->password))
+                    if($row->password == $data['pass'])
                     {
-                    
-                    $newdata = array(
+                        $newdata = array(
                         'email' => $row->email,
                         'id' => $row->id,
                         'status'=> $row->i_am_a,
@@ -61,14 +59,14 @@ class Admin_model extends CI_Model {
                         'logged_in' => TRUE,
                         'bio'     => $row->bio,
                         'pass' => $row->password
-                    );
-                        $this->load->library('session');
+                        );
+
                         $this->session->set_userdata($newdata); 
-                        redirect('admin/');
+                        redirect('profiles/edit');
+                        
                     }else{
-                        $error = 'The password and email is not match';
+                        $error = 'The password and email is not a match';
                         return $error;
-                    
                     }
                 }
             }
@@ -84,29 +82,36 @@ class Admin_model extends CI_Model {
             $row = $query->row();
                 if (isset($row))
                 {
+                    $holdPW = randomPassword();
                     
+                    $this->load->library('encrypt');
+                    $holdPW = $this->encrypt->encode($holdPW);
+                    $holdPW = $holdPW[0] . $holdPW[1] . $holdPW[2] . $holdPW[3] . $holdPW[4] . $holdPW[5] . $holdPW[6];
+
                     //echo $tmp_pass = substr( md5( time( ) ) ,1 );//chr( mt_rand( 97 ,122 ) ) 
-                    echo randomPassword();
-                    echo '</br>';
-                    
-                    die;
-                    /*
-                    $message = "This is your password :". pass_decrypt($row->password,KEY_ENCRYPT);
+
+                    //send out email with new password
+                    $message = "This is your new password: ". $holdPW;
                     //send mail
-                    $this->email->from('admin@rattananeak.com', 'Admin');
+                    $this->email->from('gig@central.com', 'Admin');
                     $this->email->to($email);
-                    $this->email->subject("Password Reset");
+                    $this->email->subject("Your Gig-Central password has been reset.");
                     $this->email->message($message);
+                    
+                    //update database to reflect user's new password
+                    $this->db->set('password', $holdPW);  
+                    $this->db->where('email', $email); 
+                    $this->db->update('Profile');  
+                    
                     if ($this->email->send())
                     {
                     $error = "The passsword has been sent to your email. Please make sure you check in the spam box.";    
                     }else{
                     $error = "<h1>Failed To Send Email</h1><p />Debug Details follow:<br />" . $this->email->print_debugger() ;    
                     }
-                    */
+                    
                 }else{
-                    $error = "The email doesn't exist on our database";
-                        
+                    $error = "The email doesn't exist on our database";   
                 }
                 return $error;
           }
